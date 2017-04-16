@@ -1,6 +1,121 @@
 # Artificial Intelligence Engineer Nanodegree
 ## Probabilistic Models
-## Project: Sign Language Recognition System
+## Project: Build a Sign Language Recognition System
+
+# Table of Contents
+  * [Chapter 1 - My Setup](#chapter-1)
+  * [Chapter 2 - Rubrics Checklist](#chapter-2)
+  * [Chapter 3 - Info from Udacity](#chapter-3)
+
+# Chapter 1 - My Setup <a id="chapter-1"></a>
+
+### Instructions and Setup Environment
+
+* Use Python 3.4 or higher
+
+* IntelliJ: File > Project Structure > Project Settings > Project > Project SDK > Python 3.6.0 (~/miniconda3/bin/python)
+* IntelliJ: Preferences > Editor > File Types > Python
+    * Add *.py
+
+* Switch to Miniconda env
+    * `source activate aind` (same steps as in https://github.com/ltfschoen/aind/blob/master/README.md)
+
+* Install dependencies
+```
+python3 -m pip install mypy typing
+python3 -m pip install numpy scipy scikit-learn pandas matplotlib jupyter
+python3 -m pip install git+https://github.com/hmmlearn/hmmlearn.git
+```
+
+* Run with `jupyter notebook asl_recognizer.ipynb` and wait for browser to open
+
+* Select a snippet of code and go to menu
+    * "Kernel" > "Restart & Clear Output"
+    * "Kernel" > "Restart & Run All"
+
+
+# Chapter 2 - Rubrics Checklist <a id="chapter-2"></a>
+
+Build system that recognizes words communicated using American Sign Language (ASL).
+Given a preprocessed dataset of tracked hand and nose positions extracted from video.
+Goal is to train a set of Hidden Markov Models (HMMs) using part of the given dataset to try
+and identify individual words from test sequences.
+
+Optional challenge is to incorporate Statistical Language Models (SLMs) that capture the
+conditional probability of particular sequences of words occurring, in order to help you improve
+the recognition accuracy of the system.
+
+### Project Specification Checklist https://review.udacity.com/#!/rubrics/749/view
+
+## CRITERIA / MEETS SPECIFICATIONS
+
+Complete each of these parts by implementing segments of code as instructed,
+and filling out any written responses to questions in markdown cells.
+Make sure you run each cell and include the output.
+The code must be free of errors and needs to meet the specified requirements.
+
+* PART 1: Data
+
+    * Prepare data for modeling
+
+        * [X] - Student provides correct alternate feature sets:
+        delta, polar, normalized, and custom.
+
+        * [X] - Student passes unit tests.
+
+        * [X] - Student provides a reasonable explanation for what
+        custom set was chosen and why (Q1).
+
+* PART 2: Model Selection
+
+    * Implement model selection techniques
+
+        * [ ] - Student correctly implements CV, BIC, and DIC model selection
+        techniques in "my_model_selectors.py".
+
+        * [ ] - Student code runs error-free in notebook, passes unit tests
+        and code review of the algorithms.
+
+        * [ ] - Student provides a brief but thoughtful comparison of the selectors (Q2).
+
+* PART 3: Recognizer
+
+    * Recognize ASL words
+
+        * [ ] - Student implements a recognizer in “my_recognizer.py” which runs
+        error-free in the notebook and passes all unit tests
+
+        * [ ] - Student provides three examples of feature/selector combinations
+        in the submission cells of the notebook.
+
+        * [ ] - Student code provides the correct words within <60% WER for at least one
+        of the three examples student provided.
+
+        * [ ] - Student provides a summary of results and speculates on how to improve the WER.
+
+* PART 4: (OPTIONAL)
+
+    * Improve the WER with Language Models
+
+        * [ ] - The recognizer you implemented in Part 3 is equivalent to a "0-gram" SLM.
+        Improve the WER with the SLM data provided with the data set in the link above
+        using "1-gram", "2-gram", and/or "3-gram" statistics.
+
+* Submission:
+
+    * Once you have completed the project and met all the requirements set in the rubric,
+    save the notebook as an HTML file by going to the File menu in the notebook and choosing
+    "Download as" > HTML. Submit the following files (and only these files) in a .zip archive:
+
+        * asl_recognizer.ipynb
+        * asl_recognizer.html
+        * my_model_selectors.py
+        * my_recognizer.py
+
+    * Note: Do not include the data directory as it will lead to a huge .zip file, and may be
+    rejected by our reviews system.
+
+# Chapter 3 - Info from Udacity <a id="chapter-3"></a>
 
 ### Install
 
@@ -15,23 +130,31 @@ This project requires **Python 3** and the following Python libraries installed:
 - [hmmlearn](http://hmmlearn.readthedocs.io/en/latest/)
 
 Notes: 
-1. It is highly recommended that you install the [Anaconda](http://continuum.io/downloads) distribution of Python and load the environment included in the "Your conda env for AI ND" lesson.
-2. The most recent development version of hmmlearn, 0.2.1, contains a bugfix related to the log function, which is used in this project.  In order to install this version of hmmearn, install it directly from its repo with the following command from within your activated Anaconda environment:
+1. It is highly recommended that you install the
+[Anaconda](http://continuum.io/downloads) distribution of Python and load the
+environment included in the "Your conda env for AI ND" lesson.
+2. The most recent development version of hmmlearn, 0.2.1, contains a bugfix
+related to the log function, which is used in this project.  In order to install
+this version of hmmearn, install it directly from its repo with the following
+command from within your activated Anaconda environment:
 ```sh
 pip install git+https://github.com/hmmlearn/hmmlearn.git
 ```
 
 ### Code
 
-A template notebook is provided as `asl_recognizer.ipynb`. The notebook is a combination tutorial and submission document.  Some of the codebase and some of your implementation will be external to the notebook. For submission, complete the **Submission** sections of each part.  This will include running your implementations in code notebook cells, answering analysis questions, and passing provided unit tests provided in the codebase and called out in the notebook. 
+Template notebook provided is `asl_recognizer.ipynb`  (combined tutorial/submission doc)
+Some of the codebase and some
+of your implementation will be external to the notebook. For submission,
+complete the **Submission** sections of each part.  This will include running
+your implementations in code notebook cells, answering analysis questions, and
+passing provided unit tests provided in the codebase and called out in the notebook.
 
 ### Run
 
-In a terminal or command window, navigate to the top-level project directory `AIND_recognizer/` (that contains this README) and run one of the following command:
-
-`jupyter notebook asl_recognizer.ipynb`
-
-This will open the Jupyter Notebook software and notebook in your browser. Follow the instructions in the notebook for completing the project.
+* Go to project directory `cd AIND_recognizer/` and run
+`jupyter notebook asl_recognizer.ipynb` to open the Jupyter Notebook in browser.
+* Follow the instructions in notebook to complete the project.
 
 
 ### Additional Information

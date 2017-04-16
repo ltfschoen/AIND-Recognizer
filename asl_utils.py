@@ -7,7 +7,7 @@ GROUND_FEATURES = ['grnd-rx', 'grnd-ry', 'grnd-lx', 'grnd-ly']
 
 
 def show_errors(guesses: list, test_set: SinglesData):
-    """ Print WER and sentence differences in tabular form
+    """ Print Word Error Rate (WER) and sentence differences in tabular form
 
     :param guesses: list of test item answers, ordered
     :param test_set: SinglesData object

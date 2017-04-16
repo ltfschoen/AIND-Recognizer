@@ -5,26 +5,28 @@ import pandas as pd
 
 
 class AslDb(object):
-    """ American Sign Language database drawn from the RWTH-BOSTON-104 frame positional data
+    """ American Sign Language database (from RWTH-BOSTON-104 frame positional data)
 
-    This class has been designed to provide a convenient interface for individual word data for students in the Udacity AI Nanodegree Program.
+    This class is designed as a convenient interface for individual word data for
+    students in the Udacity AI Nanodegree Program.
 
-    For example, to instantiate and load train/test files using a feature_method 
-	definition named features, the following snippet may be used:
+    e.g. to instantiate and load train/test files using a feature_method
+	definition named "features", the following snippet may be used:
         asl = AslDb()
         asl.build_training(tr_file, features)
         asl.build_test(tst_file, features)
 
-    Reference for the original ASL data:
+    Reference (to original ASL data):
     http://www-i6.informatik.rwth-aachen.de/~dreuw/database-rwth-boston-104.php
-    The sentences provided in the data have been segmented into isolated words for this database
+
+    Note: Sentences in the data have been segmented into isolated words for this database
     """
 
     def __init__(self,
                  hands_fn=os.path.join('data', 'hands_condensed.csv'),
                  speakers_fn=os.path.join('data', 'speaker.csv'),
                  ):
-        """ loads ASL database from csv files with hand position information by frame, and speaker information
+        """ loads ASL database from csv files with hand position info by frame, and speaker info
 
         :param hands_fn: str
             filename of hand position csv data with expected format:
