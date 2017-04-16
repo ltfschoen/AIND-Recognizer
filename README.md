@@ -70,8 +70,14 @@ The code must be free of errors and needs to meet the specified requirements.
 
     * Implement model selection techniques
 
-        * [ ] - Student correctly implements CV, BIC, and DIC model selection
-        techniques in "my_model_selectors.py".
+        * [X] - Student correctly implements BIC model selection
+        technique in "my_model_selectors.py".
+
+        * [ ] - Student correctly implements DIC model selection
+        technique in "my_model_selectors.py".
+
+        * [ ] - Student correctly implements CV model selection
+        technique in "my_model_selectors.py".
 
         * [ ] - Student code runs error-free in notebook, passes unit tests
         and code review of the algorithms.

@@ -13,9 +13,13 @@ class ModelSelector(object):
     base class for model selection (strategy design pattern)
     '''
 
-    def __init__(self, all_word_sequences: dict, all_word_Xlengths: dict, this_word: str,
+    def __init__(self,
+                 all_word_sequences: dict,
+                 all_word_Xlengths: dict,
+                 this_word: str,
                  n_constant=3,
-                 min_n_components=2, max_n_components=10,
+                 min_n_components=2,
+                 max_n_components=10,
                  random_state=14, verbose=False):
         self.words = all_word_sequences
         self.hwords = all_word_Xlengths
@@ -62,23 +66,72 @@ class SelectorConstant(ModelSelector):
 
 
 class SelectorBIC(ModelSelector):
-    """ select the model with the lowest Baysian Information Criterion(BIC) score
-
-    http://www2.imm.dtu.dk/courses/02433/doc/ch6_slides.pdf
-    Bayesian information criteria: BIC = -2 * logL + p * logN
     """
+    Abbreviations:
+        - BIC - Baysian Information Criterion
+        - CV - Cross-Validation
+
+    About BIC:
+        - Maximises the likelihood of data whilst penalising large-size models
+        - Used to scoring model topologies by balancing fit
+          and complexity within the training set for each word
+        - Avoids using CV by instead using a penalty term
+
+    BIC Equation:  BIC = -2 * log L + p * log N
+        (re-arrangment of Equation (12) in Reference [0])
+
+        - where "L" is likelihood of "fitted" model
+          where "p" is the qty of free parameters in model (aka model "complexity"). Reference [2][3]
+          where "p * log N" is the "penalty term" (increases with higher "p"
+             to penalise "complexity" and avoid "overfitting")
+          where "N" is qty of data points (size of data set)
+
+        Notes:
+          -2 * log L    -> decreases with higher "p"
+          p * log N     -> increases with higher "p"
+          N > e^2 = 7.4 -> BIC applies larger "penalty term" in this case
+
+    Selection using BIC Model:
+        - Lower the BIC score the "better" the model.
+
+    - SelectorBIC accepts argument of ModelSelector instance of base class
+      with attributes such as: this_word, min_n_components, max_n_components,
+    - Loop from min_n_components to max_n_components
+    - Find the higher score(logL), the higher the better.
+
+    References:
+        [0] - http://www2.imm.dtu.dk/courses/02433/doc/ch6_slides.pdf
+        [1] - https://en.wikipedia.org/wiki/Hidden_Markov_model#Architecture
+        [2] - https://stats.stackexchange.com/questions/12341/number-of-parameters-in-markov-model
+        [3] - https://discussions.udacity.com/t/number-of-parameters-bic-calculation/233235/8
+    """
+    def calc_score_bic(self, log_likelihood, num_params, num_data_points):
+        return (-2 * log_likelihood) + (num_params * np.log(num_data_points))
+
+    def calc_best_score_bic(self, score_bics):
+        # Min of list of lists comparing each item by value at index 0
+        return min(score_bics, key = lambda x: x[0])
 
     def select(self):
-        """ select the best model for self.this_word based on
-        BIC score for n between self.min_n_components and self.max_n_components
+        """ Select best model for self.this_word based on BIC score
+        for n between self.min_n_components and self.max_n_components
 
         :return: GaussianHMM object
         """
         warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-        # TODO implement model selection based on BIC scores
-        raise NotImplementedError
-
+        hmm_model = None
+        score_bics = []
+        for num_params in range(self.min_n_components, self.max_n_components):
+            try:
+                hmm_model = self.base_model(num_params)
+                log_likelihood = hmm_model.score(self.X, self.lengths)
+                num_data_points = sum(self.lengths)
+                score_bic = self.calc_score_bic(log_likelihood, num_params, num_data_points)
+                score_bics.append(tuple([score_bic, hmm_model]))
+            except:
+                pass
+        return self.calc_best_score_bic(score_bics)[1] if score_bics else None
 
 class SelectorDIC(ModelSelector):
     ''' select best model based on Discriminative Information Criterion
@@ -97,9 +150,9 @@ class SelectorDIC(ModelSelector):
 
 
 class SelectorCV(ModelSelector):
-    ''' select best model based on average log Likelihood of cross-validation folds
-
-    '''
+    """
+    select best model based on average log Likelihood of cross-validation folds
+    """
 
     def select(self):
         warnings.filterwarnings("ignore", category=DeprecationWarning)
