@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 
+import logging
 
 class AslDb(object):
     """ American Sign Language database (from RWTH-BOSTON-104 frame positional data)
@@ -99,6 +100,10 @@ class WordsData(object):
         :param feature_list: list of str
         :return: dict
         """
+
+        logging.debug("Loading training data sequences from CSV file suitable for HMMlearn lib based on feature method chosen.")
+        logging.debug("Please wait...")
+
         tr_df = pd.read_csv(fn)
         dict = {}
         for i in range(len(tr_df)):
@@ -107,13 +112,28 @@ class WordsData(object):
             new_sequence = [] # list of sample lists for a sequence
             for frame in range(tr_df.ix[i,'startframe'], tr_df.ix[i,'endframe']+1):
                 vid_frame = video, frame
-                sample = [asl.df.ix[vid_frame][f] for f in feature_list]
+
+                # sample = [asl.df.ix[vid_frame][f] for f in feature_list]
+
+                sample = []
+                # Expanded form of the List Comprehension for debugging:
+                for f in feature_list:
+
+                    # logging.info("Video frame: ", vid_frame)
+                    # logging.info("Feature: ", f)
+                    # logging.info("Data of individual frames: ", asl.df.__dict__)
+
+                    sample.append(asl.df.ix[vid_frame][f])
+
+                # print("Sample: ", sample)
+
                 if len(sample) > 0:  # dont add if not found
                     new_sequence.append(sample)
             if word in dict:
                 dict[word].append(new_sequence) # list of sequences
             else:
                 dict[word] = [new_sequence]
+        logging.debug("Loaded into consolidated sequenced (samples) feature data into a dictionary of words from CSV file containing word training data... ", dict)
         return dict
 
     def get_all_sequences(self):
@@ -290,6 +310,7 @@ def create_hmmlearn_data(dict):
         sequences = dict[key]
         sequence_cat, sequence_lengths = combine_sequences(sequences)
         seq_len_dict[key] = np.array(sequence_cat), sequence_lengths
+    logging.debug("Created HMMlearn concatenated sequence of tuples and lengths.")
     return seq_len_dict
 
 if __name__ == '__main__':

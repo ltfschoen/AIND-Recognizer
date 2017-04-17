@@ -22,9 +22,9 @@
 
 * Install dependencies
 ```
-python3 -m pip install mypy typing
-python3 -m pip install numpy scipy scikit-learn pandas matplotlib jupyter
-python3 -m pip install git+https://github.com/hmmlearn/hmmlearn.git
+python3 -m pip3 install mypy typing
+python3 -m pip3 install numpy scipy scikit-learn pandas matplotlib jupyter
+python3 -m pip3 install git+https://github.com/hmmlearn/hmmlearn.git
 ```
 
 * Run with `jupyter notebook asl_recognizer.ipynb` and wait for browser to open
@@ -33,6 +33,8 @@ python3 -m pip install git+https://github.com/hmmlearn/hmmlearn.git
     * "Kernel" > "Restart & Clear Output"
     * "Kernel" > "Restart & Run All"
 
+* Debug using IntelliJ breakpoints (instead of time-consuming iPython)
+by setting up configurating that runs `main.py`
 
 # Chapter 2 - Rubrics Checklist <a id="chapter-2"></a>
 
@@ -73,7 +75,7 @@ The code must be free of errors and needs to meet the specified requirements.
         * [X] - Student correctly implements BIC model selection
         technique in "my_model_selectors.py".
 
-        * [ ] - Student correctly implements DIC model selection
+        * [X] - Student correctly implements DIC model selection
         technique in "my_model_selectors.py".
 
         * [ ] - Student correctly implements CV model selection
@@ -88,7 +90,7 @@ The code must be free of errors and needs to meet the specified requirements.
 
     * Recognize ASL words
 
-        * [ ] - Student implements a recognizer in “my_recognizer.py” which runs
+        * [ ] - Student implements a recognizer in "my_recognizer.py" which runs
         error-free in the notebook and passes all unit tests
 
         * [ ] - Student provides three examples of feature/selector combinations
