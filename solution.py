@@ -69,8 +69,24 @@ def run_dic(asl, features_ground, words_to_train, min_c, max_c, rand_s):
         else:
             print("Training failed for {}".format(word))
 
+# Imports and runs all Code Cells from Jupyter Notebook files (*.ipynb)
+# in current directory whose first 13 characters are `###_DEBUG_IDE`
+# so their functions may be called from this .py file
+def import_jupyter_notebook_code():
+    logging.debug("Registering hooks so Jupyter Notebooks .ipynb importable")
+    # Registering hooks so Jupyter Notebooks .ipynb importable
+    from notebook_importing import NotebookFinder, NotebookLoader
+    # import the .ipynb file
+    import asl_recognizer
+    from asl_recognizer import test
+    asl_recognizer.test()
+
+# Note: Alternative is to within the .ipynb file and save it as a .py file
+# and then import it with `asl_recognizer`
 def run():
     try:
+        import_jupyter_notebook_code()
+
         asl = initialise_asl_db()
         features_ground = ['grnd-rx', 'grnd-ry', 'grnd-lx', 'grnd-ly']
         words_to_train = ['FISH', 'BOOK', 'VEGETABLE', 'FUTURE', 'JOHN']
@@ -79,10 +95,10 @@ def run():
         max_c = 15   # default 15
         rand_s = 14 # default 14
 
-        # logging.info("Recogniser calling BIC Model Selector")
+        # logging.debug("Recogniser calling BIC Model Selector")
         # run_bic(asl, features_ground, words_to_train, min_c, max_c, rand_s)
 
-        logging.info("Recogniser calling DIC Model Selector")
+        logging.debug("Recogniser calling DIC Model Selector")
         run_dic(asl, features_ground, words_to_train, min_c, max_c, rand_s)
 
     except SystemExit:
