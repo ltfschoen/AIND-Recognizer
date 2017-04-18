@@ -94,11 +94,10 @@ class SelectorBIC(ModelSelector):
 
     Selection using BIC Model:
         - Lower the BIC score the "better" the model.
-
-    - SelectorBIC accepts argument of ModelSelector instance of base class
-      with attributes such as: this_word, min_n_components, max_n_components,
-    - Loop from min_n_components to max_n_components
-    - Find the lowest BIC score as the "better" model.
+        - SelectorBIC accepts argument of ModelSelector instance of base class
+          with attributes such as: this_word, min_n_components, max_n_components,
+        - Loop from min_n_components to max_n_components
+        - Find the lowest BIC score as the "better" model.
 
     References:
         [0] - http://www2.imm.dtu.dk/courses/02433/doc/ch6_slides.pdf
@@ -173,11 +172,10 @@ class SelectorDIC(ModelSelector):
 
     Selection using DIC Model:
         - Higher the DIC score the "better" the model.
-
-    - SelectorDIC accepts argument of ModelSelector instance of base class
-      with attributes such as: this_word, min_n_components, max_n_components,
-    - Loop from min_n_components to max_n_components
-    - Find the highest BIC score as the "better" model.
+        - SelectorDIC accepts argument of ModelSelector instance of base class
+          with attributes such as: this_word, min_n_components, max_n_components,
+        - Loop from min_n_components to max_n_components
+        - Find the highest BIC score as the "better" model.
 
     References:
         [0] - http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.58.6208&rep=rep1&type=pdf
@@ -208,7 +206,7 @@ class SelectorDIC(ModelSelector):
         try:
             for num_states in range(self.min_n_components, self.max_n_components + 1):
                 hmm_model = self.base_model(num_states)
-                log_likelihood = hmm_model.score(self.X,self.lengths)
+                log_likelihood = hmm_model.score(self.X, self.lengths)
                 models.append((log_likelihood, hmm_model))
         except Exception as e:
             # logging.exception('DIC Exception occurred: ', e)
@@ -216,7 +214,7 @@ class SelectorDIC(ModelSelector):
         for index, model in enumerate(models):
             log_likelihood, hmm_model = model
             score_dic = log_likelihood - self.calc_avg_anti_log_likelihood(model, other_words)
-            score_dics.append((score_dic, model[1]))
+            score_dics.append(tuple([score_dic, model[1]]))
         return self.calc_best_score_dic(score_dics)[1] if score_dics else None
 
 
@@ -225,16 +223,78 @@ class SelectorCV(ModelSelector):
     Abbreviations:
         - CV - Cross-Validation
 
-    Select best model based on average log Likelihood of cross-validation folds
+    About CV:
+        - Scoring the model simply using Log Likelihood calculated from
+        feature sequences it trained on, we expect more complex models
+        to have higher likelihoods, but doesn't inform us which would
+        have a "better" likelihood score on unseen data. The model will
+        likely overfit as complexity is added.
+        - Estimate the "better" Topology model using only training data
+        by comparing scores using Cross-Validation (CV).
+        - CV technique includes breaking-down the training set into "folds",
+        rotating which fold is "left out" of the training set.
+        The fold that is "left out" is scored for validation.
+        Use this as a proxy method of finding the
+        "best" model to use on "unseen data".
+        e.g. Given a set of word sequences broken-down into three folds
+        using scikit-learn Kfold class object.
+        - CV useful to limit over-validation
 
-    - Loop from min_n_components to max_n_components
-    - Find the higher score(logL), the higher the better.
-    - Note that the score for SelectorCV is the
-      average Log Likelihood of Cross-Validation (CV) folds.
+    CV Equation:
+
+    Selection using CV Model:
+        - Higher the CV score the "better" the model.
+        - Select "best" model based on average log Likelihood
+        of cross-validation folds
+        - Loop from min_n_components to max_n_components
+        - Find the higher score(logL), the higher the better.
+        - Score that is "best" for SelectorCV is the
+          average Log Likelihood of Cross-Validation (CV) folds.
+
+    References:
+        [0] - http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.KFold.html
+        [1] - https://www.r-bloggers.com/aic-bic-vs-crossvalidation/
     """
+
+    def calc_best_score_cv(self, score_cv):
+        # Max of list of lists comparing each item by value at index 0
+        return max(score_cv, key = lambda x: x[0])
 
     def select(self):
         warnings.filterwarnings("ignore", category=DeprecationWarning)
+        # logging.debug("Sequences: %r" % self.sequences)
 
-        # TODO implement model selection using CV
-        raise NotImplementedError
+        kf = KFold(n_splits = 3, shuffle = False, random_state = None)
+        log_likelihoods = []
+        score_cvs = []
+
+        for num_states in range(self.min_n_components, self.max_n_components + 1):
+            try:
+                # Check sufficient data to split using KFold
+                if len(self.sequences) > 2:
+                    # CV loop of breaking-down the sequence (training set) into "folds" where a fold
+                    # rotated out of the training set is tested by scoring for Cross-Validation (CV)
+                    for train_index, test_index in kf.split(self.sequences):
+                        # print("TRAIN indices:", train_index, "TEST indices:", test_index)
+
+                        # Training sequences split using KFold are recombined
+                        self.X, self.lengths = combine_sequences(train_index, self.sequences)
+
+                        # Test sequences split using KFold are recombined
+                        X_test, lengths_test = combine_sequences(test_index, self.sequences)
+
+                        hmm_model = self.base_model(num_states)
+                        log_likelihood = hmm_model.score(X_test, lengths_test)
+                else:
+                    hmm_model = self.base_model(num_states)
+                    log_likelihood = hmm_model.score(self.X, self.lengths)
+
+                log_likelihoods.append(log_likelihood)
+
+                # Find average Log Likelihood of CV fold
+                score_cvs_avg = np.mean(log_likelihoods)
+                score_cvs.append(tuple([score_cvs_avg, hmm_model]))
+
+            except Exception as e:
+                pass
+        return self.calc_best_score_cv(score_cvs)[1] if score_cvs else None

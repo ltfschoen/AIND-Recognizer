@@ -36,6 +36,11 @@ python3 -m pip3 install git+https://github.com/hmmlearn/hmmlearn.git
 * Debug using IntelliJ breakpoints (instead of time-consuming iPython)
 by setting up configurating that runs `main.py`
 
+* Troubleshooting
+    * If get errors in Jupyter Notebook, it may be becaue
+    compiled .pyc files are out of sync with .py files. Try resolving by
+    deleting .pyc files `rm *.pyc` and restarting the Jupyter notebook
+
 # Chapter 2 - Rubrics Checklist <a id="chapter-2"></a>
 
 Build system that recognizes words communicated using American Sign Language (ASL).
@@ -78,13 +83,13 @@ The code must be free of errors and needs to meet the specified requirements.
         * [X] - Student correctly implements DIC model selection
         technique in "my_model_selectors.py".
 
-        * [ ] - Student correctly implements CV model selection
+        * [X] - Student correctly implements CV model selection
         technique in "my_model_selectors.py".
 
-        * [ ] - Student code runs error-free in notebook, passes unit tests
+        * [X] - Student code runs error-free in notebook, passes unit tests
         and code review of the algorithms.
 
-        * [ ] - Student provides a brief but thoughtful comparison of the selectors (Q2).
+        * [X] - Student provides a brief but thoughtful comparison of the selectors (Q2).
 
 * PART 3: Recognizer
 

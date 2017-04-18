@@ -26,10 +26,12 @@ def run_bic(asl, features_ground, words_to_train, min_c, max_c, rand_s):
     from my_model_selectors import SelectorBIC
 
     training = asl.build_training(features_ground)
+
     print("BIC Available Training words - words: ", training.words)
     print("BIC Quantity of Training words - num_items: ", training.num_items)
     print("BIC Chosen Training words: ", words_to_train)
     print("BIC Chosen Features: ", features_ground)
+
     sequences = training.get_all_sequences()
     Xlengths = training.get_all_Xlengths()
     for word in words_to_train:
@@ -50,6 +52,7 @@ def run_dic(asl, features_ground, words_to_train, min_c, max_c, rand_s):
     from my_model_selectors import SelectorDIC
 
     training = asl.build_training(features_ground)
+
     print("DIC Available Training words - words: ", training.words)
     print("DIC Quantity of Training words - num_items: ", training.num_items)
     print("DIC Chosen Training words: ", words_to_train)
@@ -64,6 +67,32 @@ def run_dic(asl, features_ground, words_to_train, min_c, max_c, rand_s):
                             max_n_components=max_c,
                             random_state = rand_s).select()
         end = timeit.default_timer()-start
+        if model is not None:
+            print("Training complete for {} with {} states with time {} seconds".format(word, model.n_components, end))
+        else:
+            print("Training failed for {}".format(word))
+
+def run_cv(asl, features_ground, words_to_train, min_c, max_c, rand_s):
+    # Copied from asl_recognizer.ipynb for IDE debugging using breakpoints.
+    # Execute the implementation of SelectorCV in module my_model_selectors.py
+    from my_model_selectors import SelectorCV
+
+    training = asl.build_training(features_ground)
+
+    print("CV Available Training words - words: ", training.words)
+    print("CV Quantity of Training words - num_items: ", training.num_items)
+    print("CV Chosen Training words: ", words_to_train)
+    print("CV Chosen Features: ", features_ground)
+
+    sequences = training.get_all_sequences()
+    Xlengths = training.get_all_Xlengths()
+    for word in words_to_train:
+        start = timeit.default_timer()
+        model = SelectorCV(sequences, Xlengths, word,
+                            min_n_components=min_c,
+                            max_n_components=max_c,
+                            random_state = rand_s).select()
+        end = timeit.default_timer() - start
         if model is not None:
             print("Training complete for {} with {} states with time {} seconds".format(word, model.n_components, end))
         else:
@@ -95,11 +124,14 @@ def run():
         max_c = 15   # default 15
         rand_s = 14 # default 14
 
-        # logging.debug("Recogniser calling BIC Model Selector")
-        # run_bic(asl, features_ground, words_to_train, min_c, max_c, rand_s)
+        logging.debug("Recogniser calling BIC Model Selector")
+        run_bic(asl, features_ground, words_to_train, min_c, max_c, rand_s)
 
         logging.debug("Recogniser calling DIC Model Selector")
         run_dic(asl, features_ground, words_to_train, min_c, max_c, rand_s)
+
+        logging.debug("Recogniser calling CV Model Selector")
+        run_cv(asl, features_ground, words_to_train, min_c, max_c, rand_s)
 
     except SystemExit:
         logging.exception('SystemExit occurred')
