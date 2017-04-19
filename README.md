@@ -3,9 +3,33 @@
 ## Project: Build a Sign Language Recognition System
 
 # Table of Contents
+
+  * [Chapter 0 - Key Results](#chapter-0)
   * [Chapter 1 - My Setup](#chapter-1)
   * [Chapter 2 - Rubrics Checklist](#chapter-2)
   * [Chapter 3 - Info from Udacity](#chapter-3)
+
+# Chapter 0 - Key Results <a id="chapter-0"></a>
+
+* Part 3 Screenshots
+
+![alt tag](https://raw.githubusercontent.com/AIND-Recognizer/master/screenshots/screenshot_part3.png)
+
+* Part 2 Screenshots
+
+![alt tag](https://raw.githubusercontent.com/AIND-Recognizer/master/screenshots/screenshot_part2_1.png)
+![alt tag](https://raw.githubusercontent.com/AIND-Recognizer/master/screenshots/screenshot_part2_2.png)
+
+* Part 3 Terminal Outputs
+    * Terminal log output from running `main.py` for Model Selectors including Constant, CV, BIC,
+    and DIC against ground, norm, polar, and delta Feature Sets are included in:
+    `part3_results/log_features_originals.md`
+    * Terminal log output from running `main.py` for Model Selectors including Constant, CV, BIC,
+    and DIC against All Features Sets (i.e. ground, norm, polar, and delta),
+    All Features Sets (excluding Norm and Polar),
+    All Features Sets (excluding Delta), and
+    All Features Sets (excluding Rescaled), are included in:
+    `part3_results/log_features_all_and_withouts.md`
 
 # Chapter 1 - My Setup <a id="chapter-1"></a>
 
@@ -95,16 +119,16 @@ The code must be free of errors and needs to meet the specified requirements.
 
     * Recognize ASL words
 
-        * [ ] - Student implements a recognizer in "my_recognizer.py" which runs
+        * [X] - Student implements a recognizer in "my_recognizer.py" which runs
         error-free in the notebook and passes all unit tests
 
-        * [ ] - Student provides three examples of feature/selector combinations
+        * [X] - Student provides three examples of feature/selector combinations
         in the submission cells of the notebook.
 
-        * [ ] - Student code provides the correct words within <60% WER for at least one
+        * [X] - Student code provides the correct words within <60% WER for at least one
         of the three examples student provided.
 
-        * [ ] - Student provides a summary of results and speculates on how to improve the WER.
+        * [X] - Student provides a summary of results and speculates on how to improve the WER.
 
 * PART 4: (OPTIONAL)
 

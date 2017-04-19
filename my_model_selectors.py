@@ -139,6 +139,12 @@ class SelectorDIC(ModelSelector):
         - DIC - Discriminative Information Criterion
 
     About DIC:
+        - In DIC we need to find the number of components where the difference is largest.
+        The idea of DIC is that we are trying to find the model that gives a
+        high likelihood (small negative number) to the original word and
+        low likelihood (very big negative number) to the other words
+        - In order to get an optimal model for any word, we need to run the model on all
+        other words so that we can calculate the formula
         - DIC is a scoring model topology that scores the ability of a
         training set to discriminate one word against competing words.
         It provides a "penalty" if model likelihoods
@@ -157,6 +163,8 @@ class SelectorDIC(ModelSelector):
 
             = log likelihood of the data belonging to model
               - avg of anti log likelihood of data X and model M
+
+            = log(P(original word)) - average(log(P(other words)))
 
         where anti log likelihood means likelihood of data X and model M belonging to competing categories
         where log(P(X(i))) is the log-likelihood of the fitted model for the current word
@@ -208,6 +216,9 @@ class SelectorDIC(ModelSelector):
                 hmm_model = self.base_model(num_states)
                 log_likelihood = hmm_model.score(self.X, self.lengths)
                 models.append((log_likelihood, hmm_model))
+
+        # Note: Situation that may cause exception may be if have more parameters to fit
+        # than there are samples, so must catch exception when the model is invalid
         except Exception as e:
             # logging.exception('DIC Exception occurred: ', e)
             pass
@@ -264,6 +275,7 @@ class SelectorCV(ModelSelector):
         warnings.filterwarnings("ignore", category=DeprecationWarning)
         # logging.debug("Sequences: %r" % self.sequences)
 
+        # num_splits = min(3, len(self.sequences))
         kf = KFold(n_splits = 3, shuffle = False, random_state = None)
         log_likelihoods = []
         score_cvs = []

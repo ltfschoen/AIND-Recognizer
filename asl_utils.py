@@ -2,6 +2,8 @@ from asl_data import SinglesData, WordsData
 import numpy as np
 from IPython.core.display import display, HTML
 
+import logging
+
 RAW_FEATURES = ['left-x', 'left-y', 'right-x', 'right-y']
 GROUND_FEATURES = ['grnd-rx', 'grnd-ry', 'grnd-lx', 'grnd-ly']
 
@@ -16,6 +18,8 @@ def show_errors(guesses: list, test_set: SinglesData):
 
     WER = (S+I+D)/N  but we have no insertions or deletions for isolated words so WER = S/N
     """
+    logging.debug("Showing Errors Started...")
+
     S = 0
     N = len(test_set.wordlist)
     num_test_words = len(test_set.wordlist)
@@ -36,7 +40,7 @@ def show_errors(guesses: list, test_set: SinglesData):
             if recognized_sentence[i] != correct_sentence[i]:
                 recognized_sentence[i] = '*' + recognized_sentence[i]
         print('{:5}: {:60}  {}'.format(video_num, ' '.join(recognized_sentence), ' '.join(correct_sentence)))
-
+    return True
 
 def getKey(item):
     return item[1]
