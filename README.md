@@ -13,12 +13,12 @@
 
 * Part 3 Screenshots
 
-![alt tag](https://raw.githubusercontent.com/AIND-Recognizer/tree/master/screenshots/screenshot_part3.png)
+![alt tag](https://raw.githubusercontent.com/ltfschoen/AIND-Recognizer/master/screenshots/screenshot_part3.png)
 
 * Part 2 Screenshots
 
-![alt tag](https://raw.githubusercontent.com/AIND-Recognizer/tree/master/screenshots/screenshot_part2_1.png)
-![alt tag](https://raw.githubusercontent.com/AIND-Recognizer/tree/master/screenshots/screenshot_part2_2.png)
+![alt tag](https://raw.githubusercontent.com/ltfschoen/AIND-Recognizer/master/screenshots/screenshot_part2_1.png)
+![alt tag](https://raw.githubusercontent.com/ltfschoen/AIND-Recognizer/master/screenshots/screenshot_part2_2.png)
 
 * Part 3 Terminal Outputs
     * Terminal log output from running `main.py` for Model Selectors including Constant, CV, BIC,
