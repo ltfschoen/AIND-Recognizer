@@ -189,14 +189,9 @@ class SelectorDIC(ModelSelector):
         [0] - http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.58.6208&rep=rep1&type=pdf
     """
 
-    def calc_sum_anti_log_likelihoods(self, model, other_words):
-        anti_log_likelihoods = []
-        for word in other_words:
-            anti_log_likelihoods.append(model[1].score(word[0], word[1]))
-        return sum(anti_log_likelihoods)
-
-    def calc_avg_anti_log_likelihood(self, model, other_words):
-        return self.calc_sum_anti_log_likelihoods(model, other_words) / (len(other_words) - 1)
+    # Calculate anti log likelihoods.
+    def calc_log_likelihood_other_words(self, model, other_words):
+        return [model[1].score(word[0], word[1]) for word in other_words]
 
     def calc_best_score_dic(self, score_dics):
         # Max of list of lists comparing each item by value at index 0
@@ -214,8 +209,8 @@ class SelectorDIC(ModelSelector):
         try:
             for num_states in range(self.min_n_components, self.max_n_components + 1):
                 hmm_model = self.base_model(num_states)
-                log_likelihood = hmm_model.score(self.X, self.lengths)
-                models.append((log_likelihood, hmm_model))
+                log_likelihood_original_word = hmm_model.score(self.X, self.lengths)
+                models.append((log_likelihood_original_word, hmm_model))
 
         # Note: Situation that may cause exception may be if have more parameters to fit
         # than there are samples, so must catch exception when the model is invalid
@@ -223,8 +218,8 @@ class SelectorDIC(ModelSelector):
             # logging.exception('DIC Exception occurred: ', e)
             pass
         for index, model in enumerate(models):
-            log_likelihood, hmm_model = model
-            score_dic = log_likelihood - self.calc_avg_anti_log_likelihood(model, other_words)
+            log_likelihood_original_word, hmm_model = model
+            score_dic = log_likelihood_original_word - np.mean(self.calc_log_likelihood_other_words(model, other_words))
             score_dics.append(tuple([score_dic, model[1]]))
         return self.calc_best_score_dic(score_dics)[1] if score_dics else None
 
