@@ -106,8 +106,51 @@ class SelectorBIC(ModelSelector):
         [3] - https://discussions.udacity.com/t/number-of-parameters-bic-calculation/233235/8
         [4] - http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.58.6208&rep=rep1&type=pdf
     """
-    def calc_score_bic(self, log_likelihood, num_states, num_data_points):
-        return (-2 * log_likelihood) + (num_states * np.log(num_data_points))
+
+    # High model complexity (i.e. containing many paths) is penalised in BIC and is defined as the number of
+    # parameters yet to be estimated (aka free parameters) in the model that are used to fit specific data set
+    #
+    # p = num_free_params = ("transition probs" == n*n) + means(n*f) + covars(n*f).
+    #
+    #  where num_free_params means "number of parameters yet to be estimated"
+    #  where n means number of model states
+    #  where f means number of data points (aka features) used to train the model (i.e. len(self.X[0]))
+    #  where probs is an abbreviation for probabilities
+    #
+    # References:
+    # - Discussion about calculating number of free parameters - https://discussions.udacity.com/t/understanding-better-model-selection/232987/7
+    #
+    # p = num_free_params = init_state_occupation_probs + transition_probs + emission_probs
+    #                     = ( num_states ) +
+    #                       ( num_states * (num_states - 1) ) +
+    #                       ( num_states * num_data_points * 2 )
+    #
+    #                     Simplifying becomes:
+    #                     = ( num_states ** 2 ) + ( 2 * num_states * num_data_points )
+    #
+    #  where init_state_occupation_probs = num_states
+    #  where num_states = possible states a hidden variable at time t may be in
+    #  where transition_probs = transition_params = num_states * (num_states - 1)
+    #    References: https://en.wikipedia.org/wiki/Hidden_Markov_model#Architecture
+    #  where emission_probs (aka output_probs)  = num_states * num_data_points * 2
+    #                                           = num_means + num_covars
+    #  where num_means and num_covars are number of means and covars calculated
+    #  (one of each for each state and feature
+    #
+    # References:
+    # - https://discussions.udacity.com/t/number-of-parameters-bic-calculation/233235/12
+    # - https://hmmlearn.readthedocs.io/en/latest/tutorial.html
+    #
+    # p = num_free_params * (num_states - 1) - num_zeros_in_transiton_matrix
+    #
+    # References:
+    # - https://discussions.udacity.com/t/number-of-parameters-bic-calculation/233235/11
+    # - https://stats.stackexchange.com/questions/12341/number-of-parameters-in-markov-model
+    def calc_num_free_params(self, num_states, num_data_points):
+        return ( num_states ** 2 ) + ( 2 * num_states * num_data_points ) - 1
+
+    def calc_score_bic(self, log_likelihood, num_free_params, num_data_points):
+        return (-2 * log_likelihood) + (num_free_params * np.log(num_data_points))
 
     def calc_best_score_bic(self, score_bics):
         # Min of list of lists comparing each item by value at index 0
@@ -127,7 +170,8 @@ class SelectorBIC(ModelSelector):
                 hmm_model = self.base_model(num_states)
                 log_likelihood = hmm_model.score(self.X, self.lengths)
                 num_data_points = sum(self.lengths)
-                score_bic = self.calc_score_bic(log_likelihood, num_states, num_data_points)
+                num_free_params = self.calc_num_free_params(num_states, num_data_points)
+                score_bic = self.calc_score_bic(log_likelihood, num_free_params, num_data_points)
                 score_bics.append(tuple([score_bic, hmm_model]))
             except:
                 pass
