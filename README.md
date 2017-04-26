@@ -9,6 +9,8 @@
   * [Chapter 2 - Rubrics Checklist](#chapter-2)
   * [Chapter 3 - Info from Udacity](#chapter-3)
 
+  * [Git Commit Style Guide](https://udacity.github.io/git-styleguide/)
+
 # Chapter 0 - Key Results <a id="chapter-0"></a>
 
 * Part 3 Screenshots
